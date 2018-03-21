@@ -30,6 +30,7 @@ import sys
 import time
 import traceback
 from bs4 import BeautifulSoup
+from bs4 import Comment
 from urllib2 import urlopen
 import urllib
 #from pexpect import run, spawn
@@ -39,7 +40,7 @@ def main ():
     global options, args
     # put webpage url here
     # example: http://thedailywag.tumblr.com/
-    webpage = "" # TODO change to command line arg
+    webpage = "https://kittybloger.wordpress.com/category/funny-pictures/" # TODO change to command line arg
 
     # put directory on pc where you want to store images
     # example: "C:\Users\aruci\Documents\scrape_output"
@@ -51,9 +52,10 @@ def main ():
     imageCount = len([name for name in os.listdir(directory) if os.path.isfile(os.path.join(directory, name))])
     if imageCount > 50:
         sys.exit("You have exceeded fifty files in the directory")
+
     # this block of code prevents us from searching for img tags that may exist within comments
     imgs = soup.find_all('img')
-    comments = soup.findAll(text=lambda text: isinstance(text, BeautifulSoup.Comment))
+    comments = soup.findAll(text=lambda text: isinstance(text, Comment))
     for comment in comments:
         comment_soup = BeautifulSoup(comment)
         imgs.extend(comment_soup.findAll('img'))
