@@ -32,7 +32,8 @@ import traceback
 from bs4 import BeautifulSoup
 from bs4 import Comment
 from urllib2 import urlopen
-import urllib
+from urllib import urlretrieve
+from urlparse import urljoin
 #from pexpect import run, spawn
 
 def main ():
@@ -44,7 +45,7 @@ def main ():
 
     # put directory on pc where you want to store images
     # example: "C:\Users\aruci\Documents\scrape_output"
-    directory = "C:\\Users\\aruci\\Documents\\scrape_output" # test directory TODO change to command line arg
+    directory = "C:\\Users\\aruci\\Documents\\scrape_output\\" # test directory TODO change to command line arg
 
     soup = BeautifulSoup(urlopen(webpage), "html.parser")
 
@@ -62,10 +63,10 @@ def main ():
 
     # go through all images on the page
     for img in imgs:
-        img_url = urllib.urljoin(webpage, img['src'])
+        img_url = urljoin(webpage, img['src'])
         file_name = img['src'].split('/')[-1]
         file_path = os.path.join(directory, file_name)
-        urllib.urlretrieve(img_url, file_path)
+        urlretrieve(img_url, file_path)
 
 if __name__ == '__main__':
     try:
