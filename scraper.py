@@ -25,6 +25,7 @@ VERSION
 
 import optparse
 import os
+import os.path
 import sys
 import time
 import traceback
@@ -36,20 +37,20 @@ import urllib
 def main ():
 
     global options, args
-    '''
-     put webpage url here
-     example: http://thedailywag.tumblr.com/
-    '''
-    webpage = ""
+    # put webpage url here
+    # example: http://thedailywag.tumblr.com/
+    webpage = "" # TODO change to command line arg
 
-    '''
-     put directory on pc where you want to store images
-     example: "C:\Users\aruci\Documents\scrape_output"
-    '''
-    directory = "C:\\Users\\aruci\\Documents\\scrape_output"
+    # put directory on pc where you want to store images
+    # example: "C:\Users\aruci\Documents\scrape_output"
+    directory = "C:\\Users\\aruci\\Documents\\scrape_output" # test directory TODO change to command line arg
 
     soup = BeautifulSoup(urlopen(webpage), "html.parser")
 
+    # let's not be hasty--and make sure that the number of images we have does not go beyond a certain
+    imageCount = len([name for name in os.listdir(directory) if os.path.isfile(os.path.join(directory, name))])
+    if imageCount > 50:
+        sys.exit("You have exceeded fifty files in the directory")
     # this block of code prevents us from searching for img tags that may exist within comments
     imgs = soup.find_all('img')
     comments = soup.findAll(text=lambda text: isinstance(text, BeautifulSoup.Comment))
