@@ -34,6 +34,7 @@ from bs4 import Comment
 from urllib2 import urlopen
 from urllib import urlretrieve
 from urlparse import urljoin
+import re
 #from pexpect import run, spawn
 
 def main ():
@@ -41,11 +42,11 @@ def main ():
     global options, args
     # put webpage url here
     # example: http://thedailywag.tumblr.com/
-    webpage = "https://kittybloger.wordpress.com/category/funny-pictures/" # TODO change to command line arg
+    webpage = "http://thedailywag.tumblr.com/" # TODO change to command line arg
 
     # put directory on pc where you want to store images
     # example: "C:\Users\aruci\Documents\scrape_output"
-    directory = "C:\\Users\\aruci\\Documents\\scrape_output\\" # test directory TODO change to command line arg
+    directory = "C:/Users/aruci/Documents/scrape_output/" # test directory TODO change to command line arg
 
     soup = BeautifulSoup(urlopen(webpage), "html.parser")
 
@@ -62,11 +63,24 @@ def main ():
         imgs.extend(comment_soup.findAll('img'))
 
     # go through all images on the page
+    i = 0;
+    # regex to match extension of a file
+    regex = re.compile(r"\.{1}(\w*)")
     for img in imgs:
+        if i > 50:
+            break
         img_url = urljoin(webpage, img['src'])
         file_name = img['src'].split('/')[-1]
-        file_path = os.path.join(directory, file_name)
+        # these file names are unwieldy, we can do better
+        # pull extension from the current file name
+        extension = regex.search(file_name).group()
+        # create a new name that is image, followed by an index, and then the original extension
+        # keeping extensions is how you ensure compatibility
+        name = ("image_%d" + extension) % i
+        file_path = os.path.join(directory, name)
         urlretrieve(img_url, file_path)
+        # increase index by one for next run of for loop.
+        i += 1
 
 if __name__ == '__main__':
     try:
